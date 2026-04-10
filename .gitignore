@@ -1,0 +1,17 @@
+node_modules/
+npm-debug.log
+*.log
+.env.local
+.env.*.local
+.env
+.vscode/
+.DS_Store
+Thumbs.db
+dist/
+build/
+/.vite/
+/src-tauri/target/
+*.iml
+*.swp
+*.swo
+/target/

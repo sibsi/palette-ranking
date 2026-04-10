@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/inter-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/inter-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/inter-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("./assets/fonts/space-grotesk-latin.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  --app-bg: #e8eef5;
+  --app-fg: #0f172a;
+  --app-top-glow: rgba(255, 255, 255, 0.46);
+  --app-bottom-glow: rgba(148, 163, 184, 0.2);
+
+  --surface-chrome: rgba(255, 255, 255, 0.74);
+  --surface-panel: rgba(255, 255, 255, 0.84);
+  --surface-panel-muted: rgba(241, 245, 249, 0.76);
+  --surface-hover: rgba(226, 232, 240, 0.88);
+  --surface-hover-strong: rgba(203, 213, 225, 0.86);
+  --surface-active: rgba(255, 255, 255, 0.92);
+  --surface-sheen: rgba(255, 255, 255, 0.52);
+  --surface-outline: rgba(255, 255, 255, 0.62);
+
+  --border-soft: rgba(148, 163, 184, 0.24);
+  --border-strong: rgba(148, 163, 184, 0.38);
+
+  --text-muted: #475569;
+  --text-soft: #64748b;
+  --text-faint: #94a3b8;
+
+  --shadow-chrome: 0 18px 40px -30px rgba(15, 23, 42, 0.34);
+  --shadow-panel: 0 24px 56px -34px rgba(15, 23, 42, 0.28);
+
+  --backdrop: rgba(15, 23, 42, 0.44);
+  --image-overlay-from: rgba(15, 23, 42, 0.6);
+  --image-overlay-via: rgba(15, 23, 42, 0.16);
+  --image-overlay-to: rgba(15, 23, 42, 0.28);
+}
+
+.dark {
+  color-scheme: dark;
+  --app-bg: #1c2431;
+  --app-fg: #e7edf6;
+  --app-top-glow: rgba(226, 232, 240, 0.06);
+  --app-bottom-glow: rgba(59, 130, 246, 0.08);
+
+  --surface-chrome: rgba(34, 43, 58, 0.8);
+  --surface-panel: rgba(36, 45, 61, 0.88);
+  --surface-panel-muted: rgba(48, 59, 78, 0.74);
+  --surface-hover: rgba(71, 85, 105, 0.34);
+  --surface-hover-strong: rgba(71, 85, 105, 0.46);
+  --surface-active: rgba(56, 68, 88, 0.92);
+  --surface-sheen: rgba(255, 255, 255, 0.05);
+  --surface-outline: rgba(255, 255, 255, 0.08);
+
+  --border-soft: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.13);
+
+  --text-muted: rgba(226, 232, 240, 0.82);
+  --text-soft: rgba(203, 213, 225, 0.68);
+  --text-faint: rgba(148, 163, 184, 0.82);
+
+  --shadow-chrome: 0 22px 44px -32px rgba(0, 0, 0, 0.55);
+  --shadow-panel: 0 26px 60px -34px rgba(0, 0, 0, 0.52);
+
+  --backdrop: rgba(7, 10, 17, 0.58);
+  --image-overlay-from: rgba(2, 6, 23, 0.56);
+  --image-overlay-via: rgba(2, 6, 23, 0.18);
+  --image-overlay-to: rgba(2, 6, 23, 0.3);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--app-bg);
+    color: var(--app-fg);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 100, 100, 0.5) transparent;
+  }
+}
+
+@layer components {
+  .app-chrome {
+    background-color: var(--surface-chrome);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-chrome);
+  }
+
+  .app-panel {
+    background-color: var(--surface-panel);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-panel);
+  }
+
+  .app-panel-muted {
+    background-color: var(--surface-panel-muted);
+    border-color: var(--border-soft);
+  }
+
+  .app-divider {
+    background-color: var(--border-strong);
+  }
+}
+
+@utility fade-y-edges {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 40px,
+    black calc(100% - 40px),
+    transparent 100%
+  );
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}

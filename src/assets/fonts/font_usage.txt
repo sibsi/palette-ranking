@@ -1,0 +1,6 @@
+- inter-regular.woff2: default body text
+- inter-medium.woff2: medium UI text
+- inter-bold.woff2: bold headings and buttons
+- space-grotesk-latin.woff2: display/accent font via `font-display`
+
+-> configured in index.css
