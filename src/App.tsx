@@ -5,7 +5,7 @@ import { FolderProvider } from "./context/FolderContext";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <FolderProvider>
         <MainLayout>
           <Routes>

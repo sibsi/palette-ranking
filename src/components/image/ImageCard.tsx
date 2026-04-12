@@ -1,7 +1,8 @@
 import { memo } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { formatHex } from "culori";
 import { Heart, Trash2, Wallpaper } from "lucide-react";
+import { convertFileSrc } from "../../lib/bridge";
+import { isDemo } from "../../lib/platform";
 import { set_wallpaper } from "../../lib/tauri";
 import type { ImageData } from "@/types";
 
@@ -47,11 +48,13 @@ function ImageCard({
 
   function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
+    if (isDemo) return;
     onDelete();
   }
 
   function handleSetWallpaper(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
+    if (isDemo) return;
     void set_wallpaper(image.file_path).catch(console.error);
   }
 
@@ -111,6 +114,7 @@ function ImageCard({
           <div className="flex gap-2">
             <OverlayButton
               onClick={handleDelete}
+              disabled={isDemo}
               title="Delete"
               className="hover:border-rose-300/55 hover:bg-white/22 hover:text-rose-200"
             >
@@ -119,6 +123,7 @@ function ImageCard({
 
             <OverlayButton
               onClick={handleSetWallpaper}
+              disabled={isDemo}
               title="Set Wallpaper"
               className="hover:border-sky-300/55 hover:bg-white/22 hover:text-sky-100"
             >
@@ -153,7 +158,7 @@ function OverlayButton({
   return (
     <button
       type="button"
-      className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/16 bg-white/18 text-white shadow-sm backdrop-blur-md transition-all duration-150 hover:scale-105 ${className}`}
+      className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/16 bg-white/18 text-white shadow-sm backdrop-blur-md transition-all duration-150 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:scale-100 ${className}`}
       {...props}
     >
       {children}

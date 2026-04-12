@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { GridSize, ImageData, ImageShape } from "@/types";
+import { isDemo } from "../../lib/platform";
 import { delete_image } from "../../lib/tauri";
 import { useLayout } from "../layout/MainLayout";
 import ImageCard from "./ImageCard";
@@ -64,6 +65,10 @@ export default function ImageGrid({
 
   const handleDeleteConfirm = useCallback(async () => {
     if (!pendingDeleteImage) return;
+    if (isDemo) {
+      setImageToDelete(null);
+      return;
+    }
 
     try {
       await delete_image(pendingDeleteImage.file_path);

@@ -1,6 +1,6 @@
 import { startTransition, useCallback, useEffect, type RefObject } from "react";
-import { listen } from "@tauri-apps/api/event";
 import type { FolderTabData, ScanProgress } from "@/types";
+import { listen } from "../lib/bridge";
 import { createScanId } from "../lib/folderHelpers";
 import { generate_thumbnails, scan_folder } from "../lib/tauri";
 

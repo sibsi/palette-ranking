@@ -9,6 +9,8 @@ interface FolderTabsProps {
   onClose: (path: string) => void;
   onOpenFolder: () => void;
   isAddingFolder?: boolean;
+  disableOpenFolder?: boolean;
+  canCloseTabs?: boolean;
 }
 
 export default function FolderTabs({
@@ -18,6 +20,8 @@ export default function FolderTabs({
   onClose,
   onOpenFolder,
   isAddingFolder = false,
+  disableOpenFolder = false,
+  canCloseTabs = true,
 }: FolderTabsProps) {
   return (
     <>
@@ -68,16 +72,18 @@ export default function FolderTabs({
                 </span>
               </button>
 
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onClose(tab.path);
-                }}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors ${closeIconClasses}`}
-              >
-                <X className="h-3 w-3" />
-              </button>
+              {canCloseTabs && (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onClose(tab.path);
+                  }}
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors ${closeIconClasses}`}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
             </div>
           );
         })}
@@ -86,7 +92,7 @@ export default function FolderTabs({
       <div className="app-divider mx-0.5 h-4 w-px shrink-0" />
       <TopbarButton
         onClick={onOpenFolder}
-        disabled={isAddingFolder}
+        disabled={isAddingFolder || disableOpenFolder}
         title="Open a New Folder"
       >
         {isAddingFolder ? (

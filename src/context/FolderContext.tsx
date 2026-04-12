@@ -10,7 +10,6 @@ import {
   type ReactNode,
   type SetStateAction,
 } from "react";
-import { open } from "@tauri-apps/plugin-dialog";
 import type {
   FolderTabData,
   ImageData,
@@ -19,8 +18,11 @@ import type {
 } from "@/types";
 import { useFolderScanning } from "../hooks/useFolderScanning";
 import { useImages } from "../hooks/useImages";
+import { DEMO_FOLDER_PATH } from "../lib/demo";
 import { useSession } from "../hooks/useSession";
+import { openDirectoryDialog } from "../lib/bridge";
 import { createFolderTab } from "../lib/folderHelpers";
+import { isDemo } from "../lib/platform";
 
 interface UseFolderValue {
   tabs: FolderTabData[];
@@ -110,6 +112,8 @@ export function FolderProvider({ children }: { children: ReactNode }) {
 
   const openFolderPath = useCallback(
     async (path: string) => {
+      if (isDemo) return false;
+
       const normalizedPath = path.trim();
       if (!normalizedPath) return false;
 
@@ -159,14 +163,20 @@ export function FolderProvider({ children }: { children: ReactNode }) {
   );
 
   const openFolder = useCallback(async () => {
-    const folderPath = await open({ directory: true, multiple: false });
-    if (!folderPath || typeof folderPath !== "string") return false;
+    if (isDemo) return false;
+
+    const folderPath = await openDirectoryDialog();
+    if (!folderPath) return false;
 
     return openFolderPath(folderPath);
   }, [openFolderPath]);
 
   const closeFolder = useCallback(
     (path: string) => {
+      if (isDemo && path === DEMO_FOLDER_PATH) {
+        return;
+      }
+
       setTabs((currentTabs) => {
         const tabIndex = currentTabs.findIndex((tab) => tab.path === path);
         if (tabIndex === -1) return currentTabs;
@@ -191,6 +201,10 @@ export function FolderProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const rescanActiveFolder = useCallback(async () => {
+    if (isDemo) {
+      return;
+    }
+
     if (activeFolderPath) {
       await scanDirectory(activeFolderPath, recursive);
     }

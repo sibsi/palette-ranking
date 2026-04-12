@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { useFolder } from "../../context/FolderContext";
+import { isDemo } from "../../lib/platform";
 import { useLayout } from "./MainLayout";
 import ThemeToggle from "../ui/ThemeToggle";
 import GridControls from "../ui/GridControls";
@@ -62,6 +63,8 @@ export default function Topbar({ showLogo = true }: TopbarProps) {
               onClose={closeFolder}
               onOpenFolder={handleAddFolder}
               isAddingFolder={isAddingFolder}
+              disableOpenFolder={isDemo}
+              canCloseTabs={!isDemo}
             />
 
             {visibleFolderPath && (
@@ -69,7 +72,7 @@ export default function Topbar({ showLogo = true }: TopbarProps) {
                 <TopbarDivider />
                 <TopbarButton
                   onClick={() => void rescanActiveFolder()}
-                  disabled={isRescanning}
+                  disabled={isRescanning || isDemo}
                   title="Rescan active folder"
                 >
                   <RefreshCw

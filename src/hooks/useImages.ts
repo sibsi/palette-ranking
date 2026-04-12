@@ -6,8 +6,8 @@ import {
   type RefObject,
   type SetStateAction,
 } from "react";
-import { listen } from "@tauri-apps/api/event";
 import type { FolderTabData, ThumbnailReadyEvent } from "@/types";
+import { listen } from "../lib/bridge";
 import { set_image_favorite } from "../lib/tauri";
 
 const THUMBNAIL_READY_EVENT = "thumbnail-ready";

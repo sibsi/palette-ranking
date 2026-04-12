@@ -8,6 +8,7 @@ import {
 import { GridSize, ImageShape, Theme } from "@/types";
 import { useFolder } from "../../context/FolderContext";
 import { useStoredState } from "../../hooks/useStoredState";
+import { isDemo } from "../../lib/platform";
 import Topbar from "./TopBar";
 import Sidebar from "./Sidebar";
 
@@ -84,7 +85,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
 
   const isWelcomeVisible =
-    !isSessionLoading && (!hasOpenFolders || isWelcomeOpen);
+    !isSessionLoading && (!hasOpenFolders || (!isDemo && isWelcomeOpen));
 
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
@@ -106,7 +107,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
       similarity,
       setSimilarity,
       isWelcomeOpen,
-      openWelcome: () => setIsWelcomeOpen(true),
+      openWelcome: () => {
+        if (isDemo) return;
+        setIsWelcomeOpen(true);
+      },
       dismissWelcome: () => setIsWelcomeOpen(false),
     }),
     [

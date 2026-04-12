@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { formatHex } from "culori";
 import { FolderOpen, Heart, Trash2, Wallpaper, X } from "lucide-react";
+import { convertFileSrc } from "../../lib/bridge";
 import { delete_image, set_wallpaper, show_in_folder } from "../../lib/tauri";
 import { getImageTags } from "../../lib/imageTags";
+import { isDemo } from "../../lib/platform";
 import type { ImageData } from "@/types";
 import ConfirmationModal from "../ui/ConfirmationModal";
 
@@ -44,6 +45,11 @@ export default function ImageView({
         : "Portrait";
 
   async function handleDeleteConfirm() {
+    if (isDemo) {
+      setIsDeleteModalOpen(false);
+      return;
+    }
+
     try {
       await delete_image(image.file_path);
       onDelete(image.id);
@@ -56,10 +62,12 @@ export default function ImageView({
   }
 
   function handleSetWallpaper() {
+    if (isDemo) return;
     void set_wallpaper(image.file_path).catch(console.error);
   }
 
   function handleShowInFolder() {
+    if (isDemo) return;
     void show_in_folder(image.file_path).catch(console.error);
   }
 
@@ -101,50 +109,52 @@ export default function ImageView({
           </button>
 
           {/* Sidebar Info Panel */}
-          <aside className="flex h-full w-80 shrink-0 flex-col border-l border-(--border-soft) bg-transparent p-8 backdrop-blur-sm">
-            <div className="min-w-0">
-              <h2 className="truncate font-bold text-(--app-fg)">
-                {image.file_name}
-              </h2>
-              <p
-                className="mt-1 truncate text-[11px] font-medium text-(--text-soft)"
-                title={image.file_path}
-              >
-                {image.file_path}
-              </p>
-            </div>
+          <aside className="flex h-full min-h-0 w-80 shrink-0 flex-col border-l border-(--border-soft) bg-transparent p-8 backdrop-blur-sm">
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <div className="min-w-0">
+                <h2 className="truncate font-bold text-(--app-fg)">
+                  {image.file_name}
+                </h2>
+                <p
+                  className="mt-1 truncate text-[11px] font-medium text-(--text-soft)"
+                  title={image.file_path}
+                >
+                  {image.file_path}
+                </p>
+              </div>
 
-            <div className="mt-6 flex gap-2">
-              <DetailPill label={`${image.width} x ${image.height}`} />
-              <DetailPill label={orientation} />
-            </div>
+              <div className="mt-6 flex gap-2">
+                <DetailPill label={`${image.width} x ${image.height}`} />
+                <DetailPill label={orientation} />
+              </div>
 
-            {/* Color Palette */}
-            <div className="mt-8">
-              <h3 className="text-[10px] font-semibold uppercase tracking-widest text-(--text-faint)">
-                Color Palette
-              </h3>
-              <div className="mt-4 space-y-4">
-                <PaletteGroup colors={image.display_palette} />
+              {/* Color Palette */}
+              <div className="mt-8">
+                <h3 className="text-[10px] font-semibold uppercase tracking-widest text-(--text-faint)">
+                  Color Palette
+                </h3>
+                <div className="mt-4 space-y-4">
+                  <PaletteGroup colors={image.display_palette} />
+                </div>
+              </div>
+
+              {/* Image Tags */}
+              <div className="mt-8 space-y-2">
+                <MetricCard label="Brightness" value={tags.brightness} />
+                <MetricCard label="Temperature" value={tags.temperature} />
+                <MetricCard label="Saturation" value={tags.saturation} />
               </div>
             </div>
 
-            {/* Image Tags */}
-            <div className="mt-8 space-y-2">
-              <MetricCard label="Brightness" value={tags.brightness} />
-              <MetricCard label="Temperature" value={tags.temperature} />
-              <MetricCard label="Saturation" value={tags.saturation} />
-            </div>
-
             {/* Action Buttons */}
-            <div className="mt-auto pt-6">
+            <div className="pt-6">
               <div className="grid grid-cols-1 gap-3">
-                <ActionButton onClick={handleSetWallpaper}>
+                <ActionButton onClick={handleSetWallpaper} disabled={isDemo}>
                   <Wallpaper size={16} />
                   Set Wallpaper
                 </ActionButton>
 
-                <ActionButton onClick={handleShowInFolder}>
+                <ActionButton onClick={handleShowInFolder} disabled={isDemo}>
                   <FolderOpen size={16} />
                   Show In Folder
                 </ActionButton>
@@ -172,8 +182,12 @@ export default function ImageView({
 
                   <button
                     type="button"
-                    onClick={() => setIsDeleteModalOpen(true)}
-                    className="app-panel-muted flex h-12 flex-1 items-center justify-center gap-2 rounded-full border px-4 text-(--text-muted) shadow-sm backdrop-blur-md transition-all hover:border-rose-300 hover:text-rose-600 dark:hover:border-rose-500/50 dark:hover:text-rose-400"
+                    onClick={() => {
+                      if (isDemo) return;
+                      setIsDeleteModalOpen(true);
+                    }}
+                    disabled={isDemo}
+                    className="app-panel-muted flex h-12 flex-1 items-center justify-center gap-2 rounded-full border px-4 text-(--text-muted) shadow-sm backdrop-blur-md transition-all hover:border-rose-300 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:border-rose-500/50 dark:hover:text-rose-400"
                     title="Delete"
                   >
                     <Trash2 size={18} />
@@ -200,15 +214,18 @@ export default function ImageView({
 function ActionButton({
   children,
   onClick,
+  disabled = false,
 }: {
   children: React.ReactNode;
   onClick: () => void;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="app-panel-muted flex items-center justify-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold text-(--text-muted) shadow-sm transition-all hover:bg-(--surface-active) hover:text-(--app-fg)"
+      disabled={disabled}
+      className="app-panel-muted flex items-center justify-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold text-(--text-muted) shadow-sm transition-all hover:bg-(--surface-active) hover:text-(--app-fg) disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent disabled:hover:text-(--text-muted)"
     >
       {children}
     </button>

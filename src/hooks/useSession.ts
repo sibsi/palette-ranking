@@ -6,6 +6,8 @@ import {
 } from "react";
 import type { FolderTabData } from "@/types";
 import { createFolderTab, normalizeFolders } from "../lib/folderHelpers";
+import { createDemoFolderTab, DEMO_FOLDER_PATH } from "../lib/demo";
+import { isDemo } from "../lib/platform";
 import { get_app_state, update_app_state } from "../lib/tauri";
 import type { ScanDirectoryOptions } from "./useFolderScanning";
 
@@ -52,7 +54,13 @@ export function useSession(
         return;
       }
 
-      setTabs(savedFolders.map((path) => createFolderTab(path)));
+      setTabs(
+        savedFolders.map((path) =>
+          isDemo && path === DEMO_FOLDER_PATH
+            ? createDemoFolderTab()
+            : createFolderTab(path),
+        ),
+      );
       setActiveFolderPath(savedFolders[0]);
 
       await Promise.all(

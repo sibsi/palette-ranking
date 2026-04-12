@@ -3,9 +3,11 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 const host = process.env.TAURI_DEV_HOST;
+const isDemoBuild = process.env.VITE_DEMO === "true";
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
+  base: isDemoBuild ? "/palette-ranking/" : "/",
   plugins: [react()],
   resolve: {
     alias: {

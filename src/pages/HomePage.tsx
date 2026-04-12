@@ -9,6 +9,7 @@ import FilterBar from "../components/ui/FilterBar";
 import BootState from "../components/scan/BootState";
 import ScanningState from "../components/scan/ScanningState";
 import FolderStatusView from "../components/scan/FolderStatusView";
+import { isDemo } from "../lib/platform";
 import { cancel_scan } from "../lib/tauri";
 
 export default function HomePage() {
@@ -98,6 +99,7 @@ export default function HomePage() {
           "This folder doesn't contain any supported JPG, PNG, or WebP files...yet."
         }
         onRescan={rescanActiveFolder}
+        disableRescan={isDemo}
       />
     );
   } else {

@@ -4,12 +4,14 @@ interface FolderStatusProps {
   title: string;
   message: string;
   onRescan: () => Promise<void>;
+  disableRescan?: boolean;
 }
 
 export default function FolderStatusView({
   title,
   message,
   onRescan,
+  disableRescan = false,
 }: FolderStatusProps) {
   return (
     <div className="flex flex-1 items-center justify-center p-6">
@@ -29,7 +31,8 @@ export default function FolderStatusView({
         <button
           type="button"
           onClick={() => void onRescan()}
-          className="group mt-10 inline-flex w-fit items-center justify-center gap-2 rounded-2xl bg-orange-600/60 px-6 py-4 text-sm font-semibold text-white transition-all dark:bg-orange-200/70 dark:text-slate-900"
+          disabled={disableRescan}
+          className="group mt-10 inline-flex w-fit items-center justify-center gap-2 rounded-2xl bg-orange-600/60 px-6 py-4 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-60 dark:bg-orange-200/70 dark:text-slate-900"
         >
           <RefreshCw className="size-4 transition-transform group-hover:rotate-180" />
           Rescan Folder
